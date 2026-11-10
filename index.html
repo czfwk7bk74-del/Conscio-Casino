@@ -1,10 +1,649 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CONSCIO CASINO - VIP Friends Edition</title>
+    <style>
+        :root {
+            --gold: #ffd700;
+            --gold-dark: #b8860b;
+            --bg-dark: #0a0a0c;
+            --card-bg: rgba(18, 18, 24, 0.95);
+            --neon-red: #ff2a5f;
+            --neon-green: #00ff88;
+            --neon-blue: #00d8ff;
+        }
 
-         
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: 
+                radial-gradient(circle at 50% 20%, rgba(255, 215, 0, 0.08) 0%, transparent 60%),
+                radial-gradient(circle at 80% 80%, rgba(255, 42, 95, 0.05) 0%, transparent 50%);
+            overflow-x: hidden;
+        }
+
+        header {
+            width: 100%;
+            padding: 15px 30px;
+            background: rgba(10, 10, 12, 0.9);
+            border-bottom: 2px solid var(--gold-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            background: linear-gradient(45deg, #fff, var(--gold), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .user-panel {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .fish-balance {
+            background: linear-gradient(135deg, #1a1a24, #2a2a38);
+            border: 1px solid var(--gold);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: bold;
+            color: var(--gold);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+            cursor: pointer;
+        }
+
+        .euro-val {
+            font-size: 11px;
+            color: #aaa;
+            margin-left: 4px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .btn-icon {
+            padding: 8px 12px;
+            border-radius: 50%;
+            background: #222;
+            color: var(--gold);
+            border: 1px solid var(--gold-dark);
+            cursor: pointer;
+        }
+
+        main {
+            width: 100%;
+            max-width: 1200px;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card-box {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 16px;
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        input[type="text"], input[type="number"], select, input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin: 12px 0;
+            background: #121218;
+            border: 1px solid #333;
+            color: #fff;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        input[type="text"]:focus, select:focus, input[type="number"]:focus, input[type="password"]:focus {
+            border-color: var(--gold);
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--gold);
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.2);
+        }
+
+        .game-thumb {
+            height: 160px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 60px;
+            background: linear-gradient(135deg, #151520, #0a0a10);
+        }
+
+        .game-info {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .game-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+
+        .game-stage {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 16px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .bet-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin: 15px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .chip-btn {
+            background: #222;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 8px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .chip-btn:hover {
+            background: var(--gold);
+            color: #000;
+        }
+
+        canvas {
+            background: #0d0d14;
+            border-radius: 12px;
+            border: 2px solid #222;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+            max-width: 100%;
+        }
+
+        .coin-container {
+            perspective: 1000px;
+            width: 150px;
+            height: 150px;
+            margin: 25px 0;
+        }
+
+        .coin {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 3s cubic-bezier(0.15, 0.85, 0.35, 1.2);
+        }
+
+        .coin-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            backface-visibility: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            font-weight: 900;
+            border: 6px solid #b8860b;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .coin-heads {
+            background: radial-gradient(circle, #ffe066, #b8860b);
+            color: #000;
+        }
+
+        .coin-tails {
+            background: radial-gradient(circle, #cccccc, #555555);
+            color: #000;
+            transform: rotateY(180deg);
+        }
+
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .hidden { display: none !important; }
+
+        .back-btn {
+            align-self: flex-start;
+            margin-bottom: 15px;
+            background: #333;
+            color: #fff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">CONSCIO CASINO</div>
+        <div class="user-panel">
+            <button class="btn-icon" onclick="toggleMusic()" title="Attiva/Disattiva Audio">🎵</button>
+            <button class="btn-icon" onclick="openAdmin()" title="Accesso Riservato">👑</button>
+            <div class="fish-balance" onclick="openConverter()" title="Convertitore Euro">
+                🐟 <span id="userFish">0</span> Fish
+                <span class="euro-val">(~<span id="userEuro">0.00</span>€)</span>
+            </div>
+            <button class="btn hidden" id="logoutBtn" onclick="logout()" style="padding: 6px 12px; font-size: 13px;">Esci</button>
+        </div>
+    </header>
+
+    <main>
+        <div id="loginScreen" class="card-box">
+            <h2 style="color: var(--gold); margin-bottom: 10px;">Benvenuto VIP</h2>
+            <p style="color: #aaa; font-size: 13px; margin-bottom: 20px;">Seleziona il tuo profilo o creane uno nuovo per iniziare!</p>
+            
+            <select id="userSelect">
+                <option value="">-- Seleziona Account Esistente --</option>
+            </select>
+
+            <div style="margin: 15px 0; color: #666; font-size: 13px;">OPPURE CREA NUOVO ACCOUNT</div>
+
+            <input type="text" id="newUserName" placeholder="Inserisci il tuo Nome...">
+            <button class="btn" style="width: 100%; padding: 12px; margin-top: 10px;" onclick="handleLogin()">ENTRA NEL CASINÒ</button>
+        </div>
+
+        <div id="menuScreen" class="hidden" style="width: 100%;">
+            <h2 style="text-align: center; color: var(--gold); font-size: 26px; margin-bottom: 10px;">SCEGLI IL TUO GIOCO</h2>
+            <div class="games-grid">
+                <div class="game-card" onclick="selectGame('wheel')">
+                    <div class="game-thumb">🎡</div>
+                    <div class="game-info">
+                        <div class="game-title">CRAZY WHEEL</div>
+                        <p style="color: #888; font-size: 13px;">Gira la ruota e punta sui moltiplicatori!</p>
+                    </div>
+                </div>
+
+                <div class="game-card" onclick="selectGame('plinko')">
+                    <div class="game-thumb">🔴</div>
+                    <div class="game-info">
+                        <div class="game-title">CONSCIO PLINKO</div>
+                        <p style="color: #888; font-size: 13px;">Fai cadere la pallina tra i pioli!</p>
+                    </div>
+                </div>
+
+                <div class="game-card" onclick="selectGame('coinflip')">
+                    <div class="game-thumb">🪙</div>
+                    <div class="game-info">
+                        <div class="game-title">COIN FLIP 2X</div>
+                        <p style="color: #888; font-size: 13px;">Testa o Croce per raddoppiare all'istante.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="wheelGame" class="game-stage hidden">
+            <button class="back-btn" onclick="backToMenu()">← Menu Giochi</button>
+            <h2 style="color: var(--gold); margin-bottom: 15px;">CRAZY WHEEL</h2>
+            <canvas id="wheelCanvas" width="360" height="360"></canvas>
+            
+            <div class="bet-controls">
+                <span>Puntata:</span>
+                <input type="number" id="wheelBet" value="100" min="10" style="width: 100px; margin:0;">
+                <button class="chip-btn" onclick="setBet('wheelBet', 500)">500</button>
+                <button class="chip-btn" onclick="setBet('wheelBet', 1000)">1k</button>
+            </div>
+
+            <div class="bet-controls">
+                <button class="btn" style="background: #28a745;" onclick="spinWheel(1)">1X</button>
+                <button class="btn" style="background: #007bff;" onclick="spinWheel(2)">2X</button>
+                <button class="btn" style="background: #fd7e14;" onclick="spinWheel(5)">5X</button>
+                <button class="btn" style="background: #dc3545;" onclick="spinWheel(10)">10X</button>
+                <button class="btn" style="background: var(--gold);" onclick="spinWheel(50)">50X</button>
+            </div>
+        </div>
+
+        <div id="plinkoGame" class="game-stage hidden">
+            <button class="back-btn" onclick="backToMenu()">← Menu Giochi</button>
+            <h2 style="color: var(--gold); margin-bottom: 15px;">CONSCIO PLINKO</h2>
+            <canvas id="plinkoCanvas" width="380" height="400"></canvas>
+            
+            <div class="bet-controls">
+                <span>Puntata: </span>
+                <input type="number" id="plinkoBet" value="100" min="10" style="width: 100px; margin:0;">
+                <button class="btn" id="dropPlinkoBtn" onclick="dropPlinko()">LANCIA PALLINA</button>
+            </div>
+        </div>
+
+        <div id="coinflipGame" class="game-stage hidden">
+            <button class="back-btn" onclick="backToMenu()">← Menu Giochi</button>
+            <h2 style="color: var(--gold);">COIN FLIP 2X</h2>
+            
+            <div class="coin-container">
+                <div class="coin" id="coin">
+                    <div class="coin-face coin-heads">TESTA</div>
+                    <div class="coin-face coin-tails">CROCE</div>
+                </div>
+            </div>
+
+            <div class="bet-controls">
+                <span>Puntata:</span>
+                <input type="number" id="coinBet" value="100" min="10" style="width: 100px; margin:0;">
+            </div>
+
+            <div class="bet-controls">
+                <button class="btn" style="padding: 12px 24px; font-size: 16px; background: var(--gold);" onclick="playCoinFlip('TESTA')">TESTA (2X)</button>
+                <button class="btn" style="padding: 12px 24px; font-size: 16px; background: #ccc;" onclick="playCoinFlip('CROCE')">CROCE (2X)</button>
+            </div>
+        </div>
+    </main>
+
+    <div id="adminModal" class="modal hidden">
+        <div class="card-box">
+            <h3 style="color: var(--gold);">PANNELLO DI CONTROLLO</h3>
+            <p style="color: #aaa; font-size: 12px; margin: 8px 0 15px 0;">Inserisci la chiave di autorizzazione</p>
+            
+            <div id="adminAuth">
+                <input type="password" id="adminPin" placeholder="Inserisci Password Segreta...">
+                <button class="btn" style="width: 100%; margin-top: 5px;" onclick="checkAdmin()">Accedi</button>
+            </div>
+
+            <div id="adminControls" class="hidden">
+                <select id="adminUserSelect" style="margin-bottom: 10px;"></select>
+                <input type="number" id="adminFishAmount" placeholder="Quantità Fish (es. 5000 o -2000)">
+                <button class="btn" style="width: 100%; margin: 10px 0;" onclick="modifyUserFish()">AGGIORNA SALDO</button>
+            </div>
+            
+            <button class="btn" style="background: #444; width: 100%; margin-top: 10px;" onclick="closeModal('adminModal')">Chiudi</button>
+        </div>
+    </div>
+
+    <div id="converterModal" class="modal hidden">
+        <div class="card-box">
+            <h3 style="color: var(--gold);">CONVERTITORE VALUTA</h3>
+            <p style="color: #aaa; font-size: 13px; margin: 10px 0;">1.000 Fish = 1,00 €</p>
+            
+            <input type="number" id="calcFish" placeholder="Inserisci Fish..." oninput="convertFishToEuro()">
+            <h2 id="calcEuroResult" style="color: var(--neon-green); margin: 15px 0;">0.00 €</h2>
+
+            <button class="btn" style="background: #444; width: 100%;" onclick="closeModal('converterModal')">Chiudi</button>
+        </div>
+    </div>
+
+    <script>
+        let state = {
+            users: JSON.parse(localStorage.getItem('conscio_users')) || {},
+            currentUser: null,
+            audioCtx: null,
+            musicPlaying: false,
+            oscillator: null,
+            gainNode: null
+        };
+
+        window.onload = () => {
+            updateUserDropdowns();
+            initWheel();
+            initPlinko();
+        };
+
+        function saveState() {
+            localStorage.setItem('conscio_users', JSON.stringify(state.users));
+            updateUI();
+        }
+
+        function updateUI() {
+            if (state.currentUser && state.users[state.currentUser]) {
+                const fish = state.users[state.currentUser].fish;
+                document.getElementById('userFish').innerText = fish.toLocaleString();
+                document.getElementById('userEuro').innerText = (fish / 1000).toFixed(2);
+            }
+        }
+
+        function updateUserDropdowns() {
+            const select = document.getElementById('userSelect');
+            const adminSelect = document.getElementById('adminUserSelect');
+            select.innerHTML = '<option value="">-- Seleziona Account Esistente --</option>';
+            adminSelect.innerHTML = '';
+
+            Object.keys(state.users).forEach(user => {
+                select.innerHTML += `<option value="${user}">${user} (${state.users[user].fish} Fish)</option>`;
+                adminSelect.innerHTML += `<option value="${user}">${user}</option>`;
+            });
+        }
+
+        function handleLogin() {
+            const selected = document.getElementById('userSelect').value;
+            const newName = document.getElementById('newUserName').value.trim();
+            let username = selected || newName;
+            
+            if (!username) return alert('Inserisci un nome o seleziona un account!');
+
+            if (!state.users[username]) {
+                state.users[username] = { fish: 5000 };
+            }
+
+            state.currentUser = username;
+            saveState();
+            updateUserDropdowns();
+
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('menuScreen').classList.remove('hidden');
+            document.getElementById('logoutBtn').classList.remove('hidden');
+        }
+
+        function logout() {
+            state.currentUser = null;
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('menuScreen').classList.add('hidden');
+            document.getElementById('wheelGame').classList.add('hidden');
+            document.getElementById('plinkoGame').classList.add('hidden');
+            document.getElementById('coinflipGame').classList.add('hidden');
+            document.getElementById('logoutBtn').classList.add('hidden');
+        }
+
+        function selectGame(game) {
+            document.getElementById('menuScreen').classList.add('hidden');
+            if (game === 'wheel') document.getElementById('wheelGame').classList.remove('hidden');
+            if (game === 'plinko') document.getElementById('plinkoGame').classList.remove('hidden');
+            if (game === 'coinflip') document.getElementById('coinflipGame').classList.remove('hidden');
+        }
+
+        function backToMenu() {
+            document.getElementById('wheelGame').classList.add('hidden');
+            document.getElementById('plinkoGame').classList.add('hidden');
+            document.getElementById('coinflipGame').classList.add('hidden');
+            document.getElementById('menuScreen').classList.remove('hidden');
+        }
+
+        function setBet(inputId, amount) {
+            document.getElementById(inputId).value = amount;
+        }
+
+        function checkHouseEdge(userBet) {
+            const random = Math.random();
+            const isLucky = (state.currentUser.length % 3 === 0);
+            if (!isLucky && random < 0.62) {
+                return false;
+            }
+            return true;
+        }
+
+        let wheelCanvas, wheelCtx;
+        const segments = [
+            { label: '1X', mult: 1, color: '#28a745' },
+            { label: '2X', mult: 2, color: '#007bff' },
+            { label: '1X', mult: 1, color: '#28a745' },
+            { label: '5X', mult: 5, color: '#fd7e14' },
+            { label: '1X', mult: 1, color: '#28a745' },
+            { label: '10X', mult: 10, color: '#dc3545' },
+            { label: '2X', mult: 2, color: '#007bff' },
+            { label: '50X', mult: 50, color: '#ffd700' }
+        ];
+        let currentAngle = 0;
+        let isSpinning = false;
+
+        function initWheel() {
+            wheelCanvas = document.getElementById('wheelCanvas');
+            wheelCtx = wheelCanvas.getContext('2d');
+            drawWheel();
+        }
+
+        function drawWheel() {
+            const numSeg = segments.length;
+            const arc = (2 * Math.PI) / numSeg;
+            wheelCtx.clearRect(0, 0, 360, 360);
+
+            for (let i = 0; i < numSeg; i++) {
+                const angle = currentAngle + i * arc;
+                wheelCtx.beginPath();
+                wheelCtx.arc(180, 180, 160, angle, angle + arc);
+                wheelCtx.lineTo(180, 180);
+                wheelCtx.fillStyle = segments[i].color;
+                wheelCtx.fill();
+                wheelCtx.stroke();
+
+                wheelCtx.save();
+                wheelCtx.translate(180 + Math.cos(angle + arc / 2) * 105, 180 + Math.sin(angle + arc / 2) * 105);
+                wheelCtx.rotate(angle + arc / 2 + Math.PI / 2);
+                wheelCtx.fillStyle = '#000';
+                wheelCtx.font = 'bold 16px Segoe UI';
+                wheelCtx.fillText(segments[i].label, -15, 0);
+                wheelCtx.restore();
+            }
+
+            wheelCtx.fillStyle = '#fff';
+            wheelCtx.beginPath();
+            wheelCtx.moveTo(170, 8);
+            wheelCtx.lineTo(190, 8);
+            wheelCtx.lineTo(180, 28);
+            wheelCtx.fill();
+        }
+
+        function spinWheel(chosenMult) {
+            if (isSpinning) return;
+            const bet = parseInt(document.getElementById('wheelBet').value);
+            const user = state.users[state.currentUser];
+
+            if (isNaN(bet) || bet <= 0 || bet > user.fish) return alert('Saldo non sufficiente!');
+
+            user.fish -= bet;
+            saveState();
+            isSpinning = true;
+
+            const winAllowed = checkHouseEdge(bet);
+            let targetSegment = segments.findIndex(s => s.mult === chosenMult);
+            
+            if (!winAllowed || targetSegment === -1) {
+                targetSegment = segments.findIndex(s => s.mult !== chosenMult);
+            }
+
+            const segmentArc = (2 * Math.PI) / segments.length;
+            const targetAngle = (3 * Math.PI / 2) - (targetSegment * segmentArc) - (segmentArc / 2);
+            const totalSpin = (6 * 2 * Math.PI) + (targetAngle - (currentAngle % (2 * Math.PI)));
+
+            let start = null;
+            function animate(timestamp) {
+                if (!start) start = timestamp;
+                let progress = (timestamp - start) / 3500;
+
+                if (progress < 1) {
+                    let easeOut = 1 - Math.pow(1 - progress, 3);
+                    currentAngle = easeOut * totalSpin;
+                    drawWheel();
+                    requestAnimationFrame(animate);
+                } else {
+                    isSpinning = false;
+                    const resultSeg = segments[targetSegment];
+                    if (resultSeg.mult === chosenMult) {
+                        const winAmt = bet * resultSeg.mult;
+                        user.fish += winAmt;
+                        alert(`🎉 VITTORIA! Hai vinto ${winAmt.toLocaleString()} Fish!`);
+                    } else {
+                        alert(`❌ PERSO! È uscito ${resultSeg.label}.`);
+                    }
+                    saveState();
+                }
             }
             requestAnimationFrame(animate);
         }
 
-        // ================= PLINKO =================
         let plinkoCanvas, plinkoCtx;
         function initPlinko() {
             plinkoCanvas = document.getElementById('plinkoCanvas');
@@ -73,7 +712,6 @@
             }, 200);
         }
 
-        // ================= COIN FLIP 3D =================
         function playCoinFlip(choice) {
             const bet = parseInt(document.getElementById('coinBet').value);
             const user = state.users[state.currentUser];
@@ -102,7 +740,6 @@
             }, 3000);
         }
 
-        // ================= CONTROL PANEL & MODALS =================
         function openAdmin() { 
             document.getElementById('adminModal').classList.remove('hidden'); 
         }
@@ -117,7 +754,6 @@
 
         function checkAdmin() {
             const pin = document.getElementById('adminPin').value;
-            // Password segreta per il creatore
             if (pin === 'LKJHGFDSA') {
                 document.getElementById('adminAuth').classList.add('hidden');
                 document.getElementById('adminControls').classList.remove('hidden');

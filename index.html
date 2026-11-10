@@ -1,0 +1,169 @@
+
+         
+            }
+            requestAnimationFrame(animate);
+        }
+
+        // ================= PLINKO =================
+        let plinkoCanvas, plinkoCtx;
+        function initPlinko() {
+            plinkoCanvas = document.getElementById('plinkoCanvas');
+            plinkoCtx = plinkoCanvas.getContext('2d');
+            drawPlinkoBoard();
+        }
+
+        function drawPlinkoBoard() {
+            plinkoCtx.clearRect(0, 0, 380, 400);
+            plinkoCtx.fillStyle = '#ffd700';
+            for (let row = 2; row < 8; row++) {
+                for (let col = 0; col <= row; col++) {
+                    let x = 190 - (row * 18) + (col * 36);
+                    let y = row * 35 + 20;
+                    plinkoCtx.beginPath();
+                    plinkoCtx.arc(x, y, 3.5, 0, Math.PI * 2);
+                    plinkoCtx.fill();
+                }
+            }
+            const multipliers = ['0X', '0.5X', '2X', '5X', '2X', '0.5X', '0X'];
+            for (let i = 0; i < multipliers.length; i++) {
+                plinkoCtx.fillStyle = (i === 0 || i === multipliers.length - 1) ? '#dc3545' : '#007bff';
+                plinkoCtx.fillRect(15 + i * 50, 340, 45, 30);
+                plinkoCtx.fillStyle = '#fff';
+                plinkoCtx.font = 'bold 12px Segoe UI';
+                plinkoCtx.fillText(multipliers[i], 24 + i * 50, 360);
+            }
+        }
+
+        function dropPlinko() {
+            const bet = parseInt(document.getElementById('plinkoBet').value);
+            const user = state.users[state.currentUser];
+            if (isNaN(bet) || bet <= 0 || bet > user.fish) return alert('Saldo non sufficiente!');
+
+            user.fish -= bet;
+            saveState();
+
+            let ballX = 190;
+            let ballY = 30;
+
+            const interval = setInterval(() => {
+                ballY += 30;
+                const winAllowed = checkHouseEdge(bet);
+                let dir = (Math.random() > 0.5) ? 1 : -1;
+                if (!winAllowed) dir = (ballX > 190) ? 1 : -1; 
+                ballX += dir * 18;
+
+                drawPlinkoBoard();
+                plinkoCtx.fillStyle = '#ff2a5f';
+                plinkoCtx.beginPath();
+                plinkoCtx.arc(ballX, ballY, 7, 0, Math.PI * 2);
+                plinkoCtx.fill();
+
+                if (ballY >= 330) {
+                    clearInterval(interval);
+                    let slotIndex = Math.floor((ballX - 15) / 50);
+                    const mults = [0, 0.5, 2, 5, 2, 0.5, 0];
+                    let mult = mults[slotIndex] || 0;
+
+                    let winAmt = bet * mult;
+                    user.fish += winAmt;
+                    if (mult > 0) alert(`🔴 Pallina su ${mult}X! Vinti ${winAmt} Fish.`);
+                    else alert(`❌ Pallina uscita ai lati (0X)! Puntata persa.`);
+                    saveState();
+                }
+            }, 200);
+        }
+
+        // ================= COIN FLIP 3D =================
+        function playCoinFlip(choice) {
+            const bet = parseInt(document.getElementById('coinBet').value);
+            const user = state.users[state.currentUser];
+            if (isNaN(bet) || bet <= 0 || bet > user.fish) return alert('Saldo non sufficiente!');
+
+            user.fish -= bet;
+            saveState();
+
+            const coin = document.getElementById('coin');
+            const winAllowed = checkHouseEdge(bet);
+            let result = winAllowed ? choice : (choice === 'TESTA' ? 'CROCE' : 'TESTA');
+            let degrees = (result === 'TESTA') ? 1800 : 1980;
+
+            coin.style.transform = `rotateY(${degrees}deg)`;
+
+            setTimeout(() => {
+                if (result === choice) {
+                    let winAmt = bet * 2;
+                    user.fish += winAmt;
+                    alert(`🪙 È uscito ${result}! Raddoppio: +${winAmt} Fish!`);
+                } else {
+                    alert(`❌ È uscito ${result}. Hai perso la puntata.`);
+                }
+                coin.style.transform = 'rotateY(0deg)';
+                saveState();
+            }, 3000);
+        }
+
+        // ================= CONTROL PANEL & MODALS =================
+        function openAdmin() { 
+            document.getElementById('adminModal').classList.remove('hidden'); 
+        }
+        
+        function closeModal(id) { 
+            document.getElementById(id).classList.add('hidden'); 
+        }
+        
+        function openConverter() { 
+            document.getElementById('converterModal').classList.remove('hidden'); 
+        }
+
+        function checkAdmin() {
+            const pin = document.getElementById('adminPin').value;
+            // Password segreta per il creatore
+            if (pin === 'LKJHGFDSA') {
+                document.getElementById('adminAuth').classList.add('hidden');
+                document.getElementById('adminControls').classList.remove('hidden');
+                document.getElementById('adminPin').value = '';
+            } else {
+                alert('Accesso Negato');
+                document.getElementById('adminPin').value = '';
+            }
+        }
+
+        function modifyUserFish() {
+            const targetUser = document.getElementById('adminUserSelect').value;
+            const amount = parseInt(document.getElementById('adminFishAmount').value);
+            if (targetUser && !isNaN(amount)) {
+                state.users[targetUser].fish += amount;
+                saveState();
+                alert(`Saldo di ${targetUser} aggiornato!`);
+                closeModal('adminModal');
+            }
+        }
+
+        function convertFishToEuro() {
+            const val = parseInt(document.getElementById('calcFish').value) || 0;
+            document.getElementById('calcEuroResult').innerText = (val / 1000).toFixed(2) + ' €';
+        }
+
+        function toggleMusic() {
+            if (!state.audioCtx) {
+                state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (state.musicPlaying) {
+                if (state.oscillator) state.oscillator.stop();
+                state.musicPlaying = false;
+            } else {
+                state.audioCtx.resume();
+                state.oscillator = state.audioCtx.createOscillator();
+                state.gainNode = state.audioCtx.createGain();
+                state.oscillator.type = 'triangle';
+                state.oscillator.frequency.setValueAtTime(220, state.audioCtx.currentTime);
+                state.gainNode.gain.setValueAtTime(0.03, state.audioCtx.currentTime);
+                state.oscillator.connect(state.gainNode);
+                state.gainNode.connect(state.audioCtx.destination);
+                state.oscillator.start();
+                state.musicPlaying = true;
+            }
+        }
+    </script>
+</body>
+</html>
